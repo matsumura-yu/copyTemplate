@@ -2,6 +2,37 @@ import xml.etree.ElementTree as ET
 import json
 import glob
 
+# 1シナリオの情報を辞書型で返す
+def createDictionary(xmlFile):
+    # xmlファイルの読み込み
+    tree = ET.parse(xmlFile)
+    # 脆弱性の配列
+    vuls = []
+    # シナリオ名の取得
+    scenarioName = tree.find('scan-information/scan-name').text
+
+    # 脆弱性のリストを取得
+    items = tree.findall('issue-type-group/item')
+    for item in items:
+
+        # 脆弱性の情報
+        vulInfo = {"vulName" : "", "count" : 0}
+
+        # 脆弱性名の取得
+        name = item.find('name').text
+        # 脆弱性の件数を取得
+        count = item.get('count')
+        
+        vulInfo["vulName"] = name
+        vulInfo["count"] = count
+
+        vuls.append(vulInfo)
+        
+    scenario = {"scenarioName": scenarioName, "vuls": vuls}
+
+    return scenario
+
+
 # 1シナリオの情報をjson保存
 def createJson(xmlFile):
     # xmlファイルの読み込み
@@ -15,7 +46,7 @@ def createJson(xmlFile):
     # vulInfo = {"vulName" : "", "count" : 0}
 
     # シナリオ名の取得
-
+    
     # 脆弱性のリストを取得
     items = tree.findall('issue-type-group/item')
     for item in items:
@@ -54,7 +85,6 @@ def createJson(xmlFile):
 
 def getAllXml():
     scanXmlList = glob.glob('*.xml')
-    print(scanXmlList)
     return scanXmlList
 
 def allXmlToJson():
@@ -64,5 +94,3 @@ def allXmlToJson():
     for scanXml in scanXmlList:
         print(scanXml)
         createJson(scanXml)
-    
-allXmlToJson()
