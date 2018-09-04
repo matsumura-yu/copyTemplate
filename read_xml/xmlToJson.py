@@ -1,10 +1,11 @@
 import xml.etree.ElementTree as ET
 import json
+import glob
 
 # 1シナリオの情報をjson保存
-def createJson():
+def createJson(xmlFile):
     # xmlファイルの読み込み
-    tree = ET.parse('sample_srb1.xml')
+    tree = ET.parse(xmlFile)
 
     # 脆弱性の配列
     vuls = []
@@ -44,10 +45,24 @@ def createJson():
 
     print(scenario)
 
-    a = open('scan.json', 'w', encoding="utf-8")
+    xmlFileName = xmlFile.split('.')[0]
+
+    jsonFileName = xmlFileName + ".json"
+    a = open(jsonFileName, 'w', encoding="utf-8")
     json.dump(scenario, a, indent = 4, ensure_ascii = False)
     a.close()
 
+def getAllXml():
+    scanXmlList = glob.glob('*.xml')
+    print(scanXmlList)
+    return scanXmlList
 
+def allXmlToJson():
+    scanXmlList = getAllXml()
+    print(scanXmlList)
 
-createJson()
+    for scanXml in scanXmlList:
+        print(scanXml)
+        createJson(scanXml)
+    
+allXmlToJson()
