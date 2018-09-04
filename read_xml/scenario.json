@@ -1,0 +1,9 @@
+{
+    "scenario_name" : "シナリオサンプル",
+    "vulnerability" : [
+        {
+            "vuls_name" : "脆弱性サンプル",
+            "count" : 1
+        }
+    ]
+}
