@@ -121,10 +121,21 @@ def createReportExcel(scenarioList):
     print(dictVul)
     print("-----------------------------------")
     
+    # コピーするワークブックを作成
+    from copy import copy
+    new_workbook = openpyxl.Workbook()
+    new_sheet = new_workbook.active
+
+    # 次に記入する行番号を貯める
+    globalIndex = 1
     for index, scenario in enumerate(scenarioList):
         print(scenario["scenarioName"])
+
+        # シナリオが変わったら2行空ける
+        globalIndex += 2
         # シナリオ毎の処理
         # 検索対象のリストを作成
+        new_sheet.cell(row = globalIndex, column = 1).value = scenario["scenarioName"]
 
         for vul_index, vul in enumerate(scenario["vuls"]):
             
@@ -132,9 +143,33 @@ def createReportExcel(scenarioList):
             # テンプレートに存在するかを確認
             if targetVul in dictVul:
                 print(targetVul + "はテンプレートの" + str(dictVul[targetVul]) + "行目に存在します")
+                
+                # 行数を取得
+                targetRowNum = dictVul[targetVul]
+                # 10列目までを取得
+                targetRow = list(templateSheet.iter_rows(min_row = targetRowNum, max_row = targetRowNum, max_col = 10))
+                print(targetRow)
+
+                # listの中にさらにTupleがありその中にCellオブジェクトがある
+                for rows in targetRow:
+                    for cell in rows:
+                        new_cell = new_sheet.cell(row = globalIndex, column = cell.col_idx, value=cell.value)
+
+                        if cell.has_style:
+                            new_cell.font = copy(cell.font)
+                            new_cell.border = copy(cell.border)
+                            new_cell.fill = copy(cell.fill)
+                            new_cell.number_format = copy(cell.number_format)
+                            new_cell.protection = copy(cell.protection)
+                            new_cell.alignment = copy(cell.alignment)
+                
+                # 行に記入したので1行次へ
+                globalIndex += 1
+
             else:
                 print(vul["vulName"] + "はテンプレートには存在しませんでした")
 
+    new_workbook.save('report.xlsx')
 
 
 
