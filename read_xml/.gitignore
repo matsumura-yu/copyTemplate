@@ -1,0 +1,6 @@
+report.xlsx
+list.xlsx
+template.xlsx
+*.json
+*.xml
+__pycache__/
