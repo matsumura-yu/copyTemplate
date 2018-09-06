@@ -142,6 +142,8 @@ def createReportExcel(scenarioList):
             targetVul = vul["vulName"].replace(' ', '').replace('(', '').replace('（', '').replace(')', '').replace('）', '')
             # テンプレートに存在するかを確認
             if targetVul in dictVul:
+                # 次の行に進める                
+                globalIndex += 1
                 print(targetVul + "はテンプレートの" + str(dictVul[targetVul]) + "行目に存在します")
                 
                 # 行数を取得
@@ -165,9 +167,6 @@ def createReportExcel(scenarioList):
                             new_cell.protection = copy(cell.protection)
                             new_cell.alignment = copy(cell.alignment)
                 
-                # 行に記入したので1行次へ
-                globalIndex += 1
-
             else:
                 print(vul["vulName"] + "はテンプレートには存在しませんでした")
 
