@@ -70,10 +70,73 @@ def dictionaryToListExcel():
         print(vulsList)
     wb.save('list.xlsx')
 
+    return scenarioList
 
 # レポートのエクセルを作成
-def createReportExcel():
+def createReportExcel(scenarioList):
+    
+    print("-------createReportExcel----------")
+
+    templateBook = openpyxl.load_workbook('template.xlsx')
+    templateSheet = templateBook['template']
+
+    dictVul = {}
+    # テンプレートから行番号と脆弱性を抽出
+    for row in templateSheet.rows:
+        if row[2].value == None or row[2].value == '脆弱性分類':
+            continue
+
+        # これはやりすぎかも
+        # vul = {"row": row[2].row, "vulName": row[2].value}
+        
+        # listにする必要ないな！
+        # 半角をすべて抜く
+        clearVal = (row[2].value).replace(' ', '').replace('(', '').replace('（', '').replace(')', '').replace('）', '')
+
+        # 脆弱性の辞書を作成
+        dictVul[clearVal] = row[2].row
+
+        # templateList.append(tempVul)
+
+    """
+    # 星取表のシートを取得
+    listBook = openpyxl.load_workbook('list.xlsx')
+    listSheet = listBook['シナリオリスト']
+
+    """
+    """
+    # search対象のリストを作成
+    targetList = []
+
+    for column in list(listSheet.columns)[0]:
+        if column.value == '脆弱性/シナリオ':
+            continue
+        targetList.append(column.value)
+
+    for cols in list(listSheet.columns):
+        print(cols[2].value)
     return
+    """
+    print("-------------dictVul--------------")
+    print(dictVul)
+    print("-----------------------------------")
+    
+    for index, scenario in enumerate(scenarioList):
+        print(scenario["scenarioName"])
+        # シナリオ毎の処理
+        # 検索対象のリストを作成
+
+        for vul_index, vul in enumerate(scenario["vuls"]):
+            
+            targetVul = vul["vulName"].replace(' ', '').replace('(', '').replace('（', '').replace(')', '').replace('）', '')
+            # テンプレートに存在するかを確認
+            if targetVul in dictVul:
+                print(targetVul + "はテンプレートの" + str(dictVul[targetVul]) + "行目に存在します")
+            else:
+                print(vul["vulName"] + "はテンプレートには存在しませんでした")
 
 
-dictionaryToListExcel()
+
+
+scenarioList = dictionaryToListExcel()
+createReportExcel(scenarioList)
