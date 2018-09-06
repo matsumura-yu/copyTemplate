@@ -154,7 +154,9 @@ def createReportExcel(scenarioList):
                 for rows in targetRow:
                     for cell in rows:
                         new_cell = new_sheet.cell(row = globalIndex, column = cell.col_idx, value=cell.value)
-
+                        # 脆弱性検出数を挿入
+                        count_cell = new_sheet.cell(row = globalIndex, column = 4, value = vul["count"])
+                        count_cell.data_type = 'n'
                         if cell.has_style:
                             new_cell.font = copy(cell.font)
                             new_cell.border = copy(cell.border)
